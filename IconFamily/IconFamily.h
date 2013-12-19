@@ -182,7 +182,7 @@
 @interface IconFamily (ScrapAdditions)
 + (BOOL) canInitWithScrap;
 + (IconFamily*) iconFamilyWithScrap;
-- initWithScrap;
+- (instancetype)initWithScrap;
 - (BOOL) putOnScrap;
 @end
 #endif

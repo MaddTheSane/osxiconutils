@@ -32,23 +32,10 @@
 #include <errno.h>
 #include <sysexits.h>
 
-/////////////////// Prototypes //////////////////
+/////////////////// Enumerations //////////////
 
-static int GenerateFileFromIcon (const char *src, char *dst, int kind);
-static int GetFileKindFromString (const char *str);
-static char* CutSuffix (char *name);
-static char* GetFileNameFromPath (char *name);
-static void PrintHelp (void);
-static void PrintVersion (void);
 
-/////////////////// Definitions //////////////////
-
-#define PROGRAM_STRING       "geticon"
-#define VERSION_STRING       "0.2"
-#define AUTHOR_STRING        "Sveinbjorn Thordarson"
-#define OPT_STRING           "vho:t:"
-
-	//file kinds
+//file kinds
 typedef NS_ENUM(short, ImageFileKind) {
 	kInvalidKindErr = -1,
 	kIcnsFileKind,
@@ -59,7 +46,23 @@ typedef NS_ENUM(short, ImageFileKind) {
 	kTiffFileKind
 };
 
-int iconRepKind = kThumbnail32BitData;
+/////////////////// Prototypes //////////////////
+
+static int GenerateFileFromIcon (const char *src, char *dst, ImageFileKind kind);
+static ImageFileKind GetFileKindFromString (const char *str);
+static char* CutSuffix (char *name);
+static char* GetFileNameFromPath (char *name);
+static void PrintHelp();
+static void PrintVersion();
+
+/////////////////// Definitions //////////////////
+
+#define PROGRAM_STRING       "geticon"
+#define VERSION_STRING       "0.2"
+#define AUTHOR_STRING        "Sveinbjorn Thordarson"
+#define OPT_STRING           "vho:t:"
+
+OSType iconRepKind = kThumbnail32BitData;
 
 
 int main (int argc, const char * argv[]) 
@@ -133,7 +136,7 @@ int main (int argc, const char * argv[])
 
 #pragma mark -
 
-static int GetFileKindFromString (const char *str)
+static ImageFileKind GetFileKindFromString (const char *str)
 {
 	if (!strcmp(str, "jpeg"))
 		return kJpegFileKind;
@@ -151,14 +154,13 @@ static int GetFileKindFromString (const char *str)
 		return kInvalidKindErr;
 }
 
-static int GenerateFileFromIcon (const char *src, char *dst, int kind)
+static int GenerateFileFromIcon (const char *src, char *dst, ImageFileKind kind)
 {
 	NSFileManager	*fm = [NSFileManager defaultManager];
 	NSString		*srcStr = [fm stringWithFileSystemRepresentation:src length:strlen(src)];
 	NSString		*dstStr = [fm stringWithFileSystemRepresentation:dst length:strlen(dst)];
 	NSData			*data = nil;
-	NSDictionary	*dict = [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:1.0] forKey:NSImageCompressionFactor];
-
+	NSDictionary	*dict = [NSDictionary dictionaryWithObject:@(1.0) forKey:NSImageCompressionFactor];
 	
 	//make sure source file we grab icon from exists
 	if (![fm fileExistsAtPath:srcStr])
@@ -177,7 +179,7 @@ static int GenerateFileFromIcon (const char *src, char *dst, int kind)
 				dstStr = [dstStr stringByAppendingPathExtension:@".icns"];
 			[icon writeToFile:dstStr];
 		}
-		break;
+			break;
 			
 		case kJpegFileKind:
 		{
@@ -185,7 +187,7 @@ static int GenerateFileFromIcon (const char *src, char *dst, int kind)
 				dstStr = [dstStr stringByAppendingPathExtension:@".jpg"];
 			data = [[icon bitmapImageRepWithAlphaForIconFamilyElement: iconRepKind] representationUsingType:NSJPEGFileType properties:dict];
 		}
-		break;
+			break;
 			
 		case kBmpFileKind:
 		{
@@ -193,7 +195,7 @@ static int GenerateFileFromIcon (const char *src, char *dst, int kind)
 				dstStr = [dstStr stringByAppendingPathExtension:@".bmp"];
 			data = [[icon bitmapImageRepWithAlphaForIconFamilyElement: iconRepKind] representationUsingType:NSBMPFileType properties:dict];
 		}
-		break;
+			break;
 			
 		case kPngFileKind:
 		{
@@ -201,25 +203,26 @@ static int GenerateFileFromIcon (const char *src, char *dst, int kind)
 				dstStr = [dstStr stringByAppendingPathExtension:@".png"];
 			data = [[icon bitmapImageRepWithAlphaForIconFamilyElement: iconRepKind] representationUsingType:NSPNGFileType properties:dict];
 		}
-		break;
-		
+			break;
+			
 		case kGifFileKind:
 		{
 			if (![dstStr hasSuffix: @".gif"])
 				dstStr = [dstStr stringByAppendingPathExtension:@".gif"];
 			data = [[icon bitmapImageRepWithAlphaForIconFamilyElement: iconRepKind] representationUsingType:NSGIFFileType properties:dict];
 		}
-		break;
+			break;
 			
+		default:
 		case kTiffFileKind:
 		{
 			if (![dstStr hasSuffix: @".tiff"])
 				dstStr = [dstStr stringByAppendingPathExtension:@".tiff"];
 			data = [[icon bitmapImageRepWithAlphaForIconFamilyElement: iconRepKind] representationUsingType:NSTIFFFileType properties:dict];
 		}
-		break;
+			break;
 	}
-			
+	
 	if (data != nil)
 		[data writeToFile:dstStr atomically:YES];
 	
@@ -239,33 +242,33 @@ static int GenerateFileFromIcon (const char *src, char *dst, int kind)
 ///////////////////////////////////////
 static char* CutSuffix (char *name)
 {
-    size_t	i, len, suffixMaxLength = 11;
-    
-    len = strlen(name);
-    
-    for (i = 1; i < suffixMaxLength+2; i++)
-    {
-        if (name[len-i] == '.')
-        {
-            name[len-i] = NULL;
-            return name;
-        }
-    }
-    return name;
+	size_t	i, len, suffixMaxLength = 11;
+	
+	len = strlen(name);
+	
+	for (i = 1; i < suffixMaxLength+2; i++)
+	{
+		if (name[len-i] == '.')
+		{
+			name[len-i] = NULL;
+			return name;
+		}
+	}
+	return name;
 }
 
 static char* GetFileNameFromPath (char *name)
 {
-    size_t	i, len;
-    
-    len = strlen(name);
-    
-    for (i = len; i > 0; i--)
-    {
-        if (name[i] == '/')
-            return((char *)&name[i+1]);
-    }
-    return name;
+	size_t	i, len;
+	
+	len = strlen(name);
+	
+	for (i = len; i > 0; i--)
+	{
+		if (name[i] == '/')
+			return((char *)&name[i+1]);
+	}
+	return name;
 }
 
 
@@ -277,7 +280,7 @@ static char* GetFileNameFromPath (char *name)
 
 static void PrintVersion (void)
 {
-    printf("%s version %s by %s\n", PROGRAM_STRING, VERSION_STRING, AUTHOR_STRING);
+	printf("%s version %s by %s\n", PROGRAM_STRING, VERSION_STRING, AUTHOR_STRING);
 }
 
 ////////////////////////////////////////
@@ -286,5 +289,5 @@ static void PrintVersion (void)
 
 static void PrintHelp (void)
 {
-    printf("usage: %s [-vh] [-t [icns|png|gif|tiff|jpeg]] [-o outputfile] file\n", PROGRAM_STRING);
+	printf("usage: %s [-vh] [-t [icns|png|gif|tiff|jpeg]] [-o outputfile] file\n", PROGRAM_STRING);
 }

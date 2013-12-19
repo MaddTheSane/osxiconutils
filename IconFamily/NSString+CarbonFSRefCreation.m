@@ -16,43 +16,43 @@
 
 - (BOOL) getFSRef:(FSRef*)fsRef createFileIfNecessary:(BOOL)createFile
 {
-    NSFileManager* fileManager = [NSFileManager defaultManager];
-    CFURLRef urlRef;
-    Boolean gotFSRef;
-    
-    // Check whether the file exists already.  If not, create an empty file if requested.
-    if (![fileManager fileExistsAtPath:self]) {
-        if (createFile) {
-            if (![@"" writeToFile:self atomically:YES encoding: NSUTF8StringEncoding error: nil]) {
-                return NO;
-            }
-        } else {
-            return NO;
-        }
-    }
-
-    // Create a CFURL with the specified POSIX path.
-    urlRef = CFURLCreateWithFileSystemPath( kCFAllocatorDefault,
-                                            (CFStringRef) self,
-                                            kCFURLPOSIXPathStyle,
-                                            FALSE /* isDirectory */ );
-    if (urlRef == NULL) {
-//        printf( "** Couldn't make a CFURLRef for the file.\n" );
-        return NO;
-    }
-    
-    // Try to create an FSRef from the URL.  (If the specified file doesn't exist, this
-    // function will return false, but if we've reached this code we've already insured
-    // that the file exists.)
-    gotFSRef = CFURLGetFSRef( urlRef, fsRef );
-    CFRelease( urlRef );
-
-    if (!gotFSRef) {
-//        printf( "** Couldn't get an FSRef for the file.\n" );
-        return NO;
-    }
-    
-    return YES;
+	NSFileManager* fileManager = [NSFileManager defaultManager];
+	CFURLRef urlRef;
+	Boolean gotFSRef;
+	
+	// Check whether the file exists already.  If not, create an empty file if requested.
+	if (![fileManager fileExistsAtPath:self]) {
+		if (createFile) {
+			if (![@"" writeToFile:self atomically:YES encoding: NSUTF8StringEncoding error: nil]) {
+				return NO;
+			}
+		} else {
+			return NO;
+		}
+	}
+	
+	// Create a CFURL with the specified POSIX path.
+	urlRef = CFURLCreateWithFileSystemPath( kCFAllocatorDefault,
+										   (CFStringRef) self,
+										   kCFURLPOSIXPathStyle,
+										   FALSE /* isDirectory */ );
+	if (urlRef == NULL) {
+		//printf( "** Couldn't make a CFURLRef for the file.\n" );
+		return NO;
+	}
+	
+	// Try to create an FSRef from the URL.  (If the specified file doesn't exist, this
+	// function will return false, but if we've reached this code we've already insured
+	// that the file exists.)
+	gotFSRef = CFURLGetFSRef( urlRef, fsRef );
+	CFRelease( urlRef );
+	
+	if (!gotFSRef) {
+		//printf( "** Couldn't get an FSRef for the file.\n" );
+		return NO;
+	}
+	
+	return YES;
 }
 
 @end
@@ -60,7 +60,7 @@
 
 @implementation NSURL (CarbonFSRefCreation)
 
-- (BOOL) getFSRef:(FSRef*)fsRef createFileIfNecessary:(BOOL)createFile
+- (BOOL)getFSRef:(FSRef*)fsRef createFileIfNecessary:(BOOL)createFile
 {
     NSFileManager* fileManager = [NSFileManager defaultManager];
     Boolean gotFSRef;
@@ -68,7 +68,7 @@
     // Check whether the file exists already.  If not, create an empty file if requested.
     if (![fileManager fileExistsAtPath:[self path]]) {
         if (createFile) {
-            if (![@"" writeToURL:self atomically:YES encoding: NSUTF8StringEncoding error: nil]) {
+            if (![@"" writeToURL:self atomically:YES encoding:NSUTF8StringEncoding error:nil]) {
                 return NO;
             }
         } else {
@@ -81,10 +81,10 @@
     // Try to create an FSRef from the URL.  (If the specified file doesn't exist, this
     // function will return false, but if we've reached this code we've already insured
     // that the file exists.)
-    gotFSRef = CFURLGetFSRef( (CFURLRef)self, fsRef );
+    gotFSRef = CFURLGetFSRef((CFURLRef)self, fsRef);
 	
     if (!gotFSRef) {
-		//        printf( "** Couldn't get an FSRef for the file.\n" );
+		//printf( "** Couldn't get an FSRef for the file.\n" );
         return NO;
     }
     

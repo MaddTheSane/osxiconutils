@@ -21,17 +21,17 @@
 #import "IconFamily.h"
 #import "ARCBridge.h"
 
-static void print_usage (void);
+static void print_usage(const char *);
 static void writeImageFromIcon (IconFamily *icon, NSString *destPath);
 
 int main (int argc, const char * argv[])
 {
 	@autoreleasepool {
 		NSApplication		*app = [NSApplication sharedApplication]; // establish connection to window server
-		NSFileManager *fm = [NSFileManager defaultManager];
+		NSFileManager		*fm = [NSFileManager defaultManager];
 		if (argc < 3)
 		{
-			print_usage();
+			print_usage(argv[0]);
 			return 1;
 		}
 		
@@ -91,7 +91,7 @@ static void writeImageFromIcon (IconFamily *icon, NSString *destPath)
 		// with no suffix, we append .tiff to destination filename and write out TIFF data
 		fprintf(stdout, "No image kind specified via suffix.  Assuming tiff.\n");
 		data = [imgRep representationUsingType: NSTIFFFileType properties:dict];
-		destPath = [destPath stringByAppendingString: @".tiff"];
+		destPath = [destPath stringByAppendingPathExtension: @".tiff"];
 	}
 	[data writeToFile: destPath atomically:YES];
 	
@@ -104,7 +104,7 @@ static void writeImageFromIcon (IconFamily *icon, NSString *destPath)
 	
 }
 
-static void print_usage ()
+static void print_usage (const char *prog)
 {
-    fprintf(stdout, "Usage:  icns2pic src dest\n");
+    fprintf(stdout, "Usage:\t%s src dest\n", prog);
 }

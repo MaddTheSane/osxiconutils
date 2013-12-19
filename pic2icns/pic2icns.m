@@ -28,45 +28,45 @@ static void writeIcon (NSImage *img, NSString *path);
 int main (int argc, const char * argv[])
 {
 	@autoreleasepool {
-	NSApplication		*app = [NSApplication sharedApplication]; // establish connection to window server
-	NSFileManager		*fm = [NSFileManager defaultManager];
-	
-	if (argc < 3)
-	{
+		NSApplication		*app = [NSApplication sharedApplication]; // establish connection to window server
+		NSFileManager		*fm = [NSFileManager defaultManager];
+		
+		if (argc < 3)
+		{
 			print_usage(argv[0]);
 			return 1;
-	}
-    
-	// get nsstrings from arguments
-	NSString *srcPath = [[NSString stringWithCString: argv[1] encoding: [NSString defaultCStringEncoding]] stringByExpandingTildeInPath];
-	NSString *destPath = [[NSString stringWithCString: argv[2] encoding: [NSString defaultCStringEncoding]] stringByExpandingTildeInPath];
-	
-	// make sure source file exists
-	if (![fm fileExistsAtPath: srcPath])
-	{
-		fprintf(stderr, "File %s does not exist\n", argv[1]);
-		return EXIT_FAILURE;
-	}
-	
-	// get nsimage from source file
-	NSImage *img = [[NSImage alloc] initWithContentsOfFile: srcPath];
-	if (img == NULL)
-	{
-		fprintf(stderr, "Error reading image file\n");
-		return EXIT_FAILURE;
-	}
-	
-	// write icon
-	writeIcon(img, destPath);
-	
-	// make sure icon was created
-	if (![fm fileExistsAtPath: destPath])
-	{
-		fprintf(stderr, "Failed to create icon\n");
-		return EXIT_FAILURE;
-	}
-	
-    return EXIT_SUCCESS;
+		}
+		
+		// get nsstrings from arguments
+		NSString *srcPath = [[NSString stringWithCString: argv[1] encoding: [NSString defaultCStringEncoding]] stringByExpandingTildeInPath];
+		NSString *destPath = [[NSString stringWithCString: argv[2] encoding: [NSString defaultCStringEncoding]] stringByExpandingTildeInPath];
+		
+		// make sure source file exists
+		if (![fm fileExistsAtPath: srcPath])
+		{
+			fprintf(stderr, "File %s does not exist\n", argv[1]);
+			return EXIT_FAILURE;
+		}
+		
+		// get nsimage from source file
+		NSImage *img = [[NSImage alloc] initWithContentsOfFile: srcPath];
+		if (img == NULL)
+		{
+			fprintf(stderr, "Error reading image file\n");
+			return EXIT_FAILURE;
+		}
+		
+		// write icon
+		writeIcon(img, destPath);
+		
+		// make sure icon was created
+		if (![fm fileExistsAtPath: destPath])
+		{
+			fprintf(stderr, "Failed to create icon\n");
+			return EXIT_FAILURE;
+		}
+		
+		return EXIT_SUCCESS;
 	}
 }
 
