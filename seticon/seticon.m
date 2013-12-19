@@ -19,9 +19,9 @@
 */
 
 /*
-	0.3 - * code cleanup, use image feature
-	0.2 - * sysexits.h constants used as exit values
-	0.1 - * Initial release
+    0.3 - * code cleanup, use image feature
+    0.2 - * sysexits.h constants used as exit values
+    0.1 - * Initial release
 */
 
 #import <Cocoa/Cocoa.h>
@@ -37,10 +37,10 @@
 #include <errno.h>
 #include <sysexits.h>
 
-#define		PROGRAM_STRING  	"seticon"
-#define		VERSION_STRING		"0.3"
-#define		AUTHOR_STRING 		"Sveinbjorn Thordarson"
-#define		OPT_STRING			"vhdi" 
+#define PROGRAM_STRING      "seticon"
+#define VERSION_STRING        "0.3"
+#define AUTHOR_STRING         "Sveinbjorn Thordarson"
+#define OPT_STRING            "vhdi" 
 
 static void PrintVersion (void);
 static void PrintHelp (void);
@@ -50,14 +50,14 @@ int main (int argc, const char * argv[])
 	@autoreleasepool {
 	NSApplication		*app = [NSApplication sharedApplication];
 
-	int					rc, optch;
-	char				*src;
-    static char			optstring[] = OPT_STRING;
+    int                 rc, optch;
+    char                *src;
+    static char         optstring[] = OPT_STRING;
 
-	BOOL				sourceIsIcns = NO;
-	BOOL				sourceIsImage = NO;
+    BOOL                sourceIsIcns = NO;
+    BOOL                sourceIsImage = NO;
 
-    while ( (optch = getopt(argc, (char * const *)argv, optstring)) != -1)
+    while ((optch = getopt(argc, (char * const *)argv, optstring)) != -1)
     {
         switch(optch)
         {
@@ -70,34 +70,34 @@ int main (int argc, const char * argv[])
                 return EX_OK;
                 break;
             case 'd':
-				sourceIsIcns = 1;
-				break;
-			case 'i':
-				sourceIsImage = 1;
-				break;
+                sourceIsIcns = 1;
+                break;
+            case 'i':
+                sourceIsImage = 1;
+                break;
             default: // '?'
                 rc = 1;
                 PrintHelp();
                 return EX_USAGE;
         }
     }
-	
-	if (sourceIsIcns && sourceIsImage)
-	{
-		fprintf(stderr, "%s: Both -i and -d parameters specified.\nSource cannot both be icns and image", PROGRAM_STRING);
+    
+    if (sourceIsIcns && sourceIsImage)
+    {
+        fprintf(stderr, "%s: Both -i and -d parameters specified.\nSource cannot both be icns and image", PROGRAM_STRING);
         PrintHelp();
         return EX_USAGE;
-	}
+    }
 
-	//check if a correct number of arguments was submitted
+    //check if a correct number of arguments was submitted
     if (argc < 3)
     {
         fprintf(stderr, "%s: Too few arguments.\n", PROGRAM_STRING);
         PrintHelp();
-		return EX_USAGE;
+        return EX_USAGE;
     }
-	
-	src = (char *)argv[optind];
+    
+    src = (char *)argv[optind];
 
 	//get the icon
 	IconFamily *icon;

@@ -43,10 +43,10 @@ static void PrintVersion (void);
 
 /////////////////// Definitions //////////////////
 
-#define		PROGRAM_STRING  	"geticon"
-#define		VERSION_STRING		"0.2"
-#define		AUTHOR_STRING 		"Sveinbjorn Thordarson"
-#define		OPT_STRING			"vho:t:"
+#define PROGRAM_STRING       "geticon"
+#define VERSION_STRING       "0.2"
+#define AUTHOR_STRING        "Sveinbjorn Thordarson"
+#define OPT_STRING           "vho:t:"
 
 	//file kinds
 typedef NS_ENUM(short, ImageFileKind) {

@@ -66,7 +66,7 @@ int main (int argc, const char * argv[])
 static void writeImageFromIcon (IconFamily *icon, NSString *destPath)
 {
 	NSData				*data;
-	NSDictionary		*dict = [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:1.0] forKey:NSImageCompressionFactor];
+	NSDictionary		*dict = [NSDictionary dictionaryWithObject:@(1.0) forKey:NSImageCompressionFactor];
 	NSBitmapImageRep	*imgRep = [icon bitmapImageRepWithAlphaForIconFamilyElement: kThumbnail32BitData];
 	
 	if (imgRep == NULL)
@@ -106,5 +106,5 @@ static void writeImageFromIcon (IconFamily *icon, NSString *destPath)
 
 static void print_usage ()
 {
-	fprintf(stdout, "Usage:  icns2pic src dest\n");
+    fprintf(stdout, "Usage:  icns2pic src dest\n");
 }
