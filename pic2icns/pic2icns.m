@@ -20,19 +20,20 @@
 
 #import <Cocoa/Cocoa.h>
 #import "IconFamily.h"
+#import "../ARCBridge.h"
 
-static void print_usage ();
+static void print_usage (const char* progValue);
 static void writeIcon (NSImage *img, NSString *path);
 
 int main (int argc, const char * argv[])
 {
-    NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
+	@autoreleasepool {
 	NSApplication		*app = [NSApplication sharedApplication]; // establish connection to window server
 	NSFileManager		*fm = [NSFileManager defaultManager];
 	
 	if (argc < 3)
 	{
-			print_usage();
+			print_usage(argv[0]);
 			return 1;
 	}
     
@@ -65,24 +66,23 @@ int main (int argc, const char * argv[])
 		return EXIT_FAILURE;
 	}
 	
-	[pool drain];
     return EXIT_SUCCESS;
+	}
 }
 
-void print_usage ()
+void print_usage (const char* progValue)
 {
-	fprintf(stdout, "Usage:  pic2icns src dest\n");
+	fprintf(stdout, "Usage:\t%s src dest\n", progValue);
 }
 
 						 
-void writeIcon (NSImage *img, NSString *path)
+void writeIcon(NSImage *img, NSString *path)
 {
-		IconFamily *iconFam = [[IconFamily alloc] initWithThumbnailsOfImage: img];
-		if (iconFam == NULL) 
-		{ 
-			fprintf(stderr, "Error generating icon from image\n");
-			exit(EXIT_FAILURE); 
-		}
-		[iconFam writeToFile: path];
-		[iconFam release];
+	IconFamily *iconFam = [[IconFamily alloc] initWithThumbnailsOfImage: img];
+	if (iconFam == nil) {
+		fprintf(stderr, "Error generating icon from image\n");
+		exit(EXIT_FAILURE);
+	}
+	[iconFam writeToFile: path];
+	RELEASEOBJ(iconFam);
 }

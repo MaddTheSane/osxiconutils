@@ -19,50 +19,52 @@
 
 #import <Cocoa/Cocoa.h>
 #import "IconFamily.h"
+#import "ARCBridge.h"
 
 static void print_usage (void);
 static void writeImageFromIcon (IconFamily *icon, NSString *destPath);
 
 int main (int argc, const char * argv[])
 {
-    NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
-	NSApplication		*app = [NSApplication sharedApplication]; // establish connection to window server
-	
-	if (argc < 3)
-	{
-		print_usage();
-		return 1;
+	@autoreleasepool {
+		NSApplication		*app = [NSApplication sharedApplication]; // establish connection to window server
+		NSFileManager *fm = [NSFileManager defaultManager];
+		if (argc < 3)
+		{
+			print_usage();
+			return 1;
+		}
+		
+		// get nsstrings from arguments
+		NSString *srcPath = [[fm stringWithFileSystemRepresentation:argv[1] length:strlen(argv[1])] stringByExpandingTildeInPath];
+		NSString *destPath = [[fm stringWithFileSystemRepresentation:argv[2] length:strlen(argv[2])] stringByExpandingTildeInPath];
+		
+		// make sure source file exists
+		if (![[NSFileManager defaultManager] fileExistsAtPath: srcPath])
+		{
+			fprintf(stderr, "File '%s' does not exist\n", argv[1]);
+			return EXIT_FAILURE;
+		}
+		
+		// get nsimage from source file
+		IconFamily *icon = [[IconFamily alloc] initWithContentsOfFile: srcPath];
+		if (icon == NULL)
+		{
+			fprintf(stderr, "Error reading icon file\n");
+			return EXIT_FAILURE;
+		}
+		
+		// write icon
+		writeImageFromIcon(icon, destPath);
+		
+		
+		RELEASEOBJ(icon);
+		return EXIT_SUCCESS;
 	}
-
-	// get nsstrings from arguments
-	NSString *srcPath = [[NSString stringWithCString: argv[1] encoding: [NSString defaultCStringEncoding]] stringByExpandingTildeInPath];
-	NSString *destPath = [[NSString stringWithCString: argv[2] encoding: [NSString defaultCStringEncoding]] stringByExpandingTildeInPath];
-	
-	// make sure source file exists
-	if (![[NSFileManager defaultManager] fileExistsAtPath: srcPath])
-	{
-		fprintf(stderr, "File '%s' does not exist\n", argv[1]);
-		return EXIT_FAILURE;
-	}
-	
-	// get nsimage from source file
-	IconFamily *icon = [[IconFamily alloc] initWithContentsOfFile: srcPath];
-	if (icon == NULL)
-	{
-		fprintf(stderr, "Error reading icon file\n");
-		return EXIT_FAILURE;
-	}
-	
-	// write icon
-	writeImageFromIcon(icon, destPath);
-	
-	[icon release];
-	[pool drain];
-    return EXIT_SUCCESS;
 }
 
 static void writeImageFromIcon (IconFamily *icon, NSString *destPath)
-{	
+{
 	NSData				*data;
 	NSDictionary		*dict = [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:1.0] forKey:NSImageCompressionFactor];
 	NSBitmapImageRep	*imgRep = [icon bitmapImageRepWithAlphaForIconFamilyElement: kThumbnail32BitData];
@@ -106,12 +108,3 @@ static void print_usage ()
 {
 	fprintf(stdout, "Usage:  icns2pic src dest\n");
 }
-
-
-
-
-
-
-
-
-

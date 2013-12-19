@@ -6,6 +6,23 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		5539830F186351180068ED13 /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 55398310186351180068ED13 /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+			);
+			dependencies = (
+				55398317186351270068ED13 /* PBXTargetDependency */,
+				55398319186351270068ED13 /* PBXTargetDependency */,
+				55398313186351220068ED13 /* PBXTargetDependency */,
+				55398315186351220068ED13 /* PBXTargetDependency */,
+			);
+			name = All;
+			productName = All;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		F4807A720FCF606C00A25839 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4807A700FCF606C00A25839 /* Cocoa.framework */; };
 		F4807A730FCF606C00A25839 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4807A710FCF606C00A25839 /* Carbon.framework */; };
@@ -29,7 +46,39 @@
 		F4E77F030FCF653100CAF741 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4807A700FCF606C00A25839 /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		55398312186351220068ED13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F4807A360FCF5F1C00A25839 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F4807A590FCF5F5700A25839;
+			remoteInfo = pic2icns;
+		};
+		55398314186351220068ED13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F4807A360FCF5F1C00A25839 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F4807B4F0FCF60DC00A25839;
+			remoteInfo = seticon;
+		};
+		55398316186351270068ED13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F4807A360FCF5F1C00A25839 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F4807B5D0FCF610100A25839;
+			remoteInfo = geticon;
+		};
+		55398318186351270068ED13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F4807A360FCF5F1C00A25839 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F4E77EE30FCF64A300CAF741;
+			remoteInfo = icns2pic;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		55398320186356B20068ED13 /* ARCBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARCBridge.h; sourceTree = "<group>"; };
 		F4807A490FCF5F3200A25839 /* icns2pic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = icns2pic.m; sourceTree = "<group>"; };
 		F4807A4B0FCF5F3200A25839 /* geticon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = geticon.m; sourceTree = "<group>"; };
 		F4807A4D0FCF5F3200A25839 /* seticon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = seticon.m; sourceTree = "<group>"; };
@@ -89,6 +138,7 @@
 		F4807A340FCF5F1C00A25839 = {
 			isa = PBXGroup;
 			children = (
+				55398320186356B20068ED13 /* ARCBridge.h */,
 				F4807A480FCF5F3200A25839 /* icns2pic */,
 				F4807A4A0FCF5F3200A25839 /* geticon */,
 				F4807A4C0FCF5F3200A25839 /* seticon */,
@@ -235,7 +285,7 @@
 		F4807A360FCF5F1C00A25839 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0410;
+				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = F4807A390FCF5F1C00A25839 /* Build configuration list for PBXProject "osxiconutils" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -253,6 +303,7 @@
 				F4807B4F0FCF60DC00A25839 /* seticon */,
 				F4807B5D0FCF610100A25839 /* geticon */,
 				F4E77EE30FCF64A300CAF741 /* icns2pic */,
+				5539830F186351180068ED13 /* All */,
 			);
 		};
 /* End PBXProject section */
@@ -300,25 +351,176 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		55398313186351220068ED13 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F4807A590FCF5F5700A25839 /* pic2icns */;
+			targetProxy = 55398312186351220068ED13 /* PBXContainerItemProxy */;
+		};
+		55398315186351220068ED13 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F4807B4F0FCF60DC00A25839 /* seticon */;
+			targetProxy = 55398314186351220068ED13 /* PBXContainerItemProxy */;
+		};
+		55398317186351270068ED13 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F4807B5D0FCF610100A25839 /* geticon */;
+			targetProxy = 55398316186351270068ED13 /* PBXContainerItemProxy */;
+		};
+		55398319186351270068ED13 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F4E77EE30FCF64A300CAF741 /* icns2pic */;
+			targetProxy = 55398318186351270068ED13 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
-		F4807A370FCF5F1C00A25839 /* Release */ = {
+		55398311186351180068ED13 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					i386,
-					ppc,
-				);
-				COPY_PHASE_STRIP = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5539831A1863517A0068ED13 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_ENABLE_MODULES = YES;
+				"CLANG_ENABLE_OBJC_ARC[arch=x86_64]" = YES;
+				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_CW_ASM_SYNTAX = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_UNROLL_LOOPS = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.6.8;
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3.9;
+				ONLY_ACTIVE_ARCH = YES;
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
+				SDKROOT = macosx10.8;
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Debug;
+		};
+		5539831B1863517A0068ED13 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PRODUCT_NAME = pic2icns;
+				STRIP_INSTALLED_PRODUCT = YES;
+			};
+			name = Debug;
+		};
+		5539831C1863517A0068ED13 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PRODUCT_NAME = seticon;
+				STRIP_INSTALLED_PRODUCT = YES;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		5539831D1863517A0068ED13 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PRODUCT_NAME = geticon;
+				STRIP_INSTALLED_PRODUCT = YES;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		5539831E1863517A0068ED13 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PRODUCT_NAME = icns2pic;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = YES;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		5539831F1863517A0068ED13 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F4807A370FCF5F1C00A25839 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_ENABLE_MODULES = YES;
+				"CLANG_ENABLE_OBJC_ARC[arch=x86_64]" = YES;
+				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_CW_ASM_SYNTAX = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_UNROLL_LOOPS = NO;
+				LLVM_LTO = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6.8;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3.9;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.8;
 			};
 			name = Release;
 		};
@@ -413,10 +615,19 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		55398310186351180068ED13 /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				55398311186351180068ED13 /* Release */,
+				5539831F1863517A0068ED13 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		F4807A390FCF5F1C00A25839 /* Build configuration list for PBXProject "osxiconutils" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F4807A370FCF5F1C00A25839 /* Release */,
+				5539831A1863517A0068ED13 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -425,6 +636,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F4807A5D0FCF5F5700A25839 /* Release */,
+				5539831B1863517A0068ED13 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -433,6 +645,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F4807B520FCF60DD00A25839 /* Release */,
+				5539831C1863517A0068ED13 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -441,6 +654,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F4807B600FCF610200A25839 /* Release */,
+				5539831D1863517A0068ED13 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -449,6 +663,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F4E77EE60FCF64A300CAF741 /* Release */,
+				5539831E1863517A0068ED13 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

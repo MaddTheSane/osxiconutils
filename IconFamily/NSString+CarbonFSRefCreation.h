@@ -23,3 +23,9 @@
 - (BOOL) getFSRef:(FSRef*)fsRef createFileIfNecessary:(BOOL)createFile;
 
 @end
+
+@interface NSURL (CarbonFSRefCreation)
+
+- (BOOL) getFSRef:(FSRef*)fsRef createFileIfNecessary:(BOOL)createFile;
+
+@end

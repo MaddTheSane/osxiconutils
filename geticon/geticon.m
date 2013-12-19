@@ -34,8 +34,8 @@
 
 /////////////////// Prototypes //////////////////
 
-static int GenerateFileFromIcon (char *src, char *dst, int kind);
-static int GetFileKindFromString (char *str);
+static int GenerateFileFromIcon (const char *src, char *dst, int kind);
+static int GetFileKindFromString (const char *str);
 static char* CutSuffix (char *name);
 static char* GetFileNameFromPath (char *name);
 static void PrintHelp (void);
@@ -49,115 +49,119 @@ static void PrintVersion (void);
 #define		OPT_STRING			"vho:t:"
 
 	//file kinds
-	#define		kInvalidKindErr -1
-	#define		kIcnsFileKind   0
-	#define		kJpegFileKind   1
-	#define		kBmpFileKind	2
-	#define		kPngFileKind	3
-	#define		kGifFileKind	4
-	#define		kTiffFileKind   5
+typedef NS_ENUM(short, ImageFileKind) {
+	kInvalidKindErr = -1,
+	kIcnsFileKind,
+	kJpegFileKind,
+	kBmpFileKind,
+	kPngFileKind,
+	kGifFileKind,
+	kTiffFileKind
+};
 
 int iconRepKind = kThumbnail32BitData;
 
 
 int main (int argc, const char * argv[]) 
 {
-    NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
-	NSApplication		*app = [NSApplication sharedApplication];
-	int					rc, optch, result, kind = kIcnsFileKind;
-	char				*src = NULL, *dst = NULL;
-	int					alloced = TRUE;
-    static char			optstring[] = OPT_STRING;
-
-    while ( (optch = getopt(argc, (char * const *)argv, optstring)) != -1)
-    {
-        switch(optch)
-        {
-            case 'v':
-                PrintVersion();
-                return EX_OK;
-                break;
-            case 'h':
-                PrintHelp();
-                return EX_OK;
-                break;
-            case 'o':
-                dst = optarg;
-				alloced = FALSE;
-                break;
-			case 't':
-				kind = GetFileKindFromString(optarg);
-				if (kind == kInvalidKindErr)
-				{
-					fprintf(stderr, "%s: %s: Invalid file kind\n", PROGRAM_STRING, optarg);
-					return EX_USAGE;
-				}
-				break;
-            default: // '?'
-                rc = 1;
-                PrintHelp();
-                return EX_OK;
-        }
-    }
-
-	src = argv[optind];
-
-	//check if a correct number of arguments was submitted
-    if (argc < 2 || src == NULL)
-    {
-        fprintf(stderr, "%s: Too few arguments.\n", PROGRAM_STRING);
-        PrintHelp();
-        return EX_USAGE;
-    }
-	
-	//make destination icon file path current working directory with filename plus icns suffix
-	if (dst == NULL)
-	{
-		dst = malloc(2048);
-		strcpy(dst, src);
-		strcpy(dst, (char *)GetFileNameFromPath(dst));
-		dst = CutSuffix(dst);
+	@autoreleasepool {
+		NSApplication		*app = [NSApplication sharedApplication];
+		int					rc, optch, result, kind = kIcnsFileKind;
+		const char			*src = NULL;
+		char				*dst = NULL;
+		int					alloced = TRUE;
+		static char			optstring[] = OPT_STRING;
+		
+		while ( (optch = getopt(argc, (char * const *)argv, optstring)) != -1)
+		{
+			switch(optch)
+			{
+				case 'v':
+					PrintVersion();
+					return EX_OK;
+					break;
+				case 'h':
+					PrintHelp();
+					return EX_OK;
+					break;
+				case 'o':
+					dst = optarg;
+					alloced = FALSE;
+					break;
+				case 't':
+					kind = GetFileKindFromString(optarg);
+					if (kind == kInvalidKindErr)
+					{
+						fprintf(stderr, "%s: %s: Invalid file kind\n", PROGRAM_STRING, optarg);
+						return EX_USAGE;
+					}
+					break;
+				default: // '?'
+					rc = 1;
+					PrintHelp();
+					return EX_OK;
+			}
+		}
+		
+		src = argv[optind];
+		
+		//check if a correct number of arguments was submitted
+		if (argc < 2 || src == NULL)
+		{
+			fprintf(stderr, "%s:\tToo few arguments.\n", argv[0]);
+			PrintHelp();
+			return EX_USAGE;
+		}
+		
+		//make destination icon file path current working directory with filename plus icns suffix
+		if (dst == NULL)
+		{
+			dst = malloc(PATH_MAX);
+			strcpy(dst, src);
+			strcpy(dst, (char *)GetFileNameFromPath(dst));
+			dst = CutSuffix(dst);
+		}
+		
+		result = GenerateFileFromIcon(src, dst, kind);
+		
+		if (alloced == TRUE)
+			free(dst);
+		
+		return result;
 	}
-	
-	result = GenerateFileFromIcon(src, dst, kind);
-	
-	if (alloced == TRUE)
-		free(dst);
-	
-    [pool drain];
-    return result;
 }
 
 #pragma mark -
 
-static int GetFileKindFromString (char *str)
+static int GetFileKindFromString (const char *str)
 {
-	if (!strcmp(str, (char *)"jpeg"))
-		return 1;
-	if (!strcmp(str, (char *)"bmp"))
-		return 2;
-	if (!strcmp(str, (char *)"png"))
-		return 3;
-	if (!strcmp(str, (char *)"gif"))
-		return 4;
-	if (!strcmp(str, (char *)"tiff"))
-		return 5;
-	if (!strcmp(str, (char *)"icns"))
-		return 0;
-
-	return kInvalidKindErr;
+	if (!strcmp(str, "jpeg"))
+		return kJpegFileKind;
+	else if (!strcmp(str, "bmp"))
+		return kBmpFileKind;
+	else if (!strcmp(str, "png"))
+		return kPngFileKind;
+	else if (!strcmp(str, "gif"))
+		return kGifFileKind;
+	else if (!strcmp(str, "tiff"))
+		return kTiffFileKind;
+	else if (!strcmp(str, "icns"))
+		return kIcnsFileKind;
+	else
+		return kInvalidKindErr;
 }
 
-static int GenerateFileFromIcon (char *src, char *dst, int kind)
+static int GenerateFileFromIcon (const char *src, char *dst, int kind)
 {
-	NSString		*srcStr = [NSString stringWithCString: src encoding: [NSString defaultCStringEncoding]];
-	NSString		*dstStr = [NSString stringWithCString: dst encoding: [NSString defaultCStringEncoding]];
-	NSData			*data = NULL;
+	NSFileManager	*fm = [NSFileManager defaultManager];
+	NSString		*srcStr = [fm stringWithFileSystemRepresentation:src length:strlen(src)];
+	NSString		*dstStr = [fm stringWithFileSystemRepresentation:dst length:strlen(dst)];
+	NSData			*data = nil;
 	NSDictionary	*dict = [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:1.0] forKey:NSImageCompressionFactor];
 
 	
 	//make sure source file we grab icon from exists
-	if (![[NSFileManager defaultManager] fileExistsAtPath: srcStr])
+	if (![fm fileExistsAtPath:srcStr])
 	{
 		fprintf(stderr, "%s: %s: No such file or directory\n", PROGRAM_STRING, src);
 		return EX_NOINPUT;
@@ -170,15 +174,15 @@ static int GenerateFileFromIcon (char *src, char *dst, int kind)
 		case kIcnsFileKind:
 		{
 			if (![dstStr hasSuffix: @".icns"])
-				dstStr = [dstStr stringByAppendingString:@".icns"];
-			[icon writeToFile: dstStr];
+				dstStr = [dstStr stringByAppendingPathExtension:@".icns"];
+			[icon writeToFile:dstStr];
 		}
 		break;
 			
 		case kJpegFileKind:
 		{
 			if (![dstStr hasSuffix: @".jpg"])
-				dstStr = [dstStr stringByAppendingString:@".jpg"];
+				dstStr = [dstStr stringByAppendingPathExtension:@".jpg"];
 			data = [[icon bitmapImageRepWithAlphaForIconFamilyElement: iconRepKind] representationUsingType:NSJPEGFileType properties:dict];
 		}
 		break;
@@ -186,7 +190,7 @@ static int GenerateFileFromIcon (char *src, char *dst, int kind)
 		case kBmpFileKind:
 		{
 			if (![dstStr hasSuffix: @".bmp"])
-				dstStr = [dstStr stringByAppendingString:@".bmp"];
+				dstStr = [dstStr stringByAppendingPathExtension:@".bmp"];
 			data = [[icon bitmapImageRepWithAlphaForIconFamilyElement: iconRepKind] representationUsingType:NSBMPFileType properties:dict];
 		}
 		break;
@@ -194,7 +198,7 @@ static int GenerateFileFromIcon (char *src, char *dst, int kind)
 		case kPngFileKind:
 		{
 			if (![dstStr hasSuffix: @".png"])
-				dstStr = [dstStr stringByAppendingString:@".png"];
+				dstStr = [dstStr stringByAppendingPathExtension:@".png"];
 			data = [[icon bitmapImageRepWithAlphaForIconFamilyElement: iconRepKind] representationUsingType:NSPNGFileType properties:dict];
 		}
 		break;
@@ -202,7 +206,7 @@ static int GenerateFileFromIcon (char *src, char *dst, int kind)
 		case kGifFileKind:
 		{
 			if (![dstStr hasSuffix: @".gif"])
-				dstStr = [dstStr stringByAppendingString:@".gif"];
+				dstStr = [dstStr stringByAppendingPathExtension:@".gif"];
 			data = [[icon bitmapImageRepWithAlphaForIconFamilyElement: iconRepKind] representationUsingType:NSGIFFileType properties:dict];
 		}
 		break;
@@ -210,14 +214,14 @@ static int GenerateFileFromIcon (char *src, char *dst, int kind)
 		case kTiffFileKind:
 		{
 			if (![dstStr hasSuffix: @".tiff"])
-				dstStr = [dstStr stringByAppendingString:@".tiff"];
+				dstStr = [dstStr stringByAppendingPathExtension:@".tiff"];
 			data = [[icon bitmapImageRepWithAlphaForIconFamilyElement: iconRepKind] representationUsingType:NSTIFFFileType properties:dict];
 		}
 		break;
 	}
 			
-	if (data != NULL)
-		[data writeToFile: dstStr atomically:YES];
+	if (data != nil)
+		[data writeToFile:dstStr atomically:YES];
 	
 	//see if file was created
 	BOOL isDir;
@@ -235,7 +239,7 @@ static int GenerateFileFromIcon (char *src, char *dst, int kind)
 ///////////////////////////////////////
 static char* CutSuffix (char *name)
 {
-    short	i, len, suffixMaxLength = 11;
+    size_t	i, len, suffixMaxLength = 11;
     
     len = strlen(name);
     
@@ -252,7 +256,7 @@ static char* CutSuffix (char *name)
 
 static char* GetFileNameFromPath (char *name)
 {
-    short	i, len;
+    size_t	i, len;
     
     len = strlen(name);
     

@@ -26,6 +26,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "IconFamily.h"
+#import "ARCBridge.h"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -46,7 +47,7 @@ static void PrintHelp (void);
 
 int main (int argc, const char * argv[]) 
 {
-    NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
+	@autoreleasepool {
 	NSApplication		*app = [NSApplication sharedApplication];
 
 	int					rc, optch;
@@ -127,7 +128,7 @@ int main (int argc, const char * argv[])
 			return EXIT_FAILURE;
 		}
 		
-		[image release];
+		RELEASEOBJ(image);
 	}
 	else
 	{
@@ -152,8 +153,8 @@ int main (int argc, const char * argv[])
 			[icon setAsCustomIconForFile: dstPath];
 	}
 	
-    [pool drain];
     return EX_OK;
+	}
 }
 
 #pragma mark -

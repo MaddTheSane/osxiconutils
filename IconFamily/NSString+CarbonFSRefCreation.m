@@ -23,7 +23,7 @@
     // Check whether the file exists already.  If not, create an empty file if requested.
     if (![fileManager fileExistsAtPath:self]) {
         if (createFile) {
-            if (![@"" writeToFile:self atomically:YES encoding: [NSString defaultCStringEncoding] error: nil]) {
+            if (![@"" writeToFile:self atomically:YES encoding: NSUTF8StringEncoding error: nil]) {
                 return NO;
             }
         } else {
@@ -56,3 +56,40 @@
 }
 
 @end
+
+
+@implementation NSURL (CarbonFSRefCreation)
+
+- (BOOL) getFSRef:(FSRef*)fsRef createFileIfNecessary:(BOOL)createFile
+{
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    Boolean gotFSRef;
+    
+    // Check whether the file exists already.  If not, create an empty file if requested.
+    if (![fileManager fileExistsAtPath:[self path]]) {
+        if (createFile) {
+            if (![@"" writeToURL:self atomically:YES encoding: NSUTF8StringEncoding error: nil]) {
+                return NO;
+            }
+        } else {
+            return NO;
+        }
+    }
+	
+    // Create a CFURL with the specified POSIX path.
+    
+    // Try to create an FSRef from the URL.  (If the specified file doesn't exist, this
+    // function will return false, but if we've reached this code we've already insured
+    // that the file exists.)
+    gotFSRef = CFURLGetFSRef( (CFURLRef)self, fsRef );
+	
+    if (!gotFSRef) {
+		//        printf( "** Couldn't get an FSRef for the file.\n" );
+        return NO;
+    }
+    
+    return YES;
+}
+
+@end
+

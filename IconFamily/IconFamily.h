@@ -57,24 +57,24 @@
 // Initializes as a new, empty IconFamily.  This is IconFamily's designated
 // initializer method.
 
-- init;
+- (instancetype)init;
 
 // Initializes an IconFamily by loading the contents of an .icns file.
 
-- initWithContentsOfFile:(NSString*)path;
+- (instancetype)initWithContentsOfFile:(NSString*)path;
 
 // Initializes an IconFamily from an existing Carbon IconFamilyHandle.
 
-- initWithIconFamilyHandle:(IconFamilyHandle)hNewIconFamily;
+- (instancetype)initWithIconFamilyHandle:(IconFamilyHandle)hNewIconFamily;
 
 // Initializes an IconFamily by loading the Finder icon that's assigned to a
 // file.
 
-- initWithIconOfFile:(NSString*)path;
+- (instancetype)initWithIconOfFile:(NSString*)path;
 
 // Initializes an IconFamily by referencing a standard system icon.
 
-- initWithSystemIcon:(int)fourByteCode;
+- (instancetype)initWithSystemIcon:(OSType)fourByteCode;
 
 // Initializes an IconFamily by creating its elements from a resampled
 // NSImage.  The second form of this method allows you to specify the degree
@@ -84,8 +84,8 @@
 // second form with imageInterpolation set to NSImageInterpolationHigh, which
 // produces highly smoothed thumbnails.
 
-- initWithThumbnailsOfImage:(NSImage*)image;
-- initWithThumbnailsOfImage:(NSImage*)image usingImageInterpolation:(NSImageInterpolation)imageInterpolation;
+- (instancetype)initWithThumbnailsOfImage:(NSImage*)image;
+- (instancetype)initWithThumbnailsOfImage:(NSImage*)image usingImageInterpolation:(NSImageInterpolation)imageInterpolation;
 
 // Writes the icon family to an .icns file.
 
@@ -176,6 +176,7 @@
 
 @end
 
+#ifndef __LP64__
 // Methods for interfacing with the Carbon Scrap Manager (analogous to and
 // interoperable with the Cocoa Pasteboard).
 @interface IconFamily (ScrapAdditions)
@@ -184,3 +185,4 @@
 - initWithScrap;
 - (BOOL) putOnScrap;
 @end
+#endif
