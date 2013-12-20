@@ -41,54 +41,47 @@ enum {
 
 
 @interface IconFamily ()
-
 + (NSImage*) resampleImage:(NSImage*)image toIconWidth:(int)width usingImageInterpolation:(NSImageInterpolation)imageInterpolation;
-
-+ (Handle) get32BitDataFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize;
-
-+ (Handle) get8BitDataFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize;
-
-+ (Handle) get8BitMaskFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize;
-
-+ (Handle) get1BitMaskFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize;
-
-- (BOOL) addResourceType:(OSType)type asResID:(ResID)resID;
-
++ (Handle)get32BitDataFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize;
++ (Handle)get8BitDataFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize;
++ (Handle)get8BitMaskFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize;
++ (Handle)get1BitMaskFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize;
+- (BOOL)addResourceType:(OSType)type asResID:(ResID)resID;
 @end
 
 @implementation IconFamily
 
-+ (IconFamily*) iconFamily
++ (IconFamily*)iconFamily
 {
 	return AUTORELEASEOBJ([[IconFamily alloc] init]);
 }
 
-+ (IconFamily*) iconFamilyWithContentsOfFile:(NSString*)path
++ (IconFamily*)iconFamilyWithContentsOfFile:(NSString*)path
 {
 	return AUTORELEASEOBJ([[IconFamily alloc] initWithContentsOfFile:path]);
 }
 
-+ (IconFamily*) iconFamilyWithIconOfFile:(NSString*)path
++ (IconFamily*)iconFamilyWithIconOfFile:(NSString*)path
 {
 	return AUTORELEASEOBJ([[IconFamily alloc] initWithIconOfFile:path]);
 }
 
-+ (IconFamily*) iconFamilyWithIconFamilyHandle:(IconFamilyHandle)hNewIconFamily
++ (IconFamily*)iconFamilyWithIconFamilyHandle:(IconFamilyHandle)hNewIconFamily
 {
 	return AUTORELEASEOBJ([[IconFamily alloc] initWithIconFamilyHandle:hNewIconFamily]);
 }
 
-+ (IconFamily*) iconFamilyWithSystemIcon:(int)fourByteCode
++ (IconFamily*)iconFamilyWithSystemIcon:(int)fourByteCode
 {
 	return AUTORELEASEOBJ([[IconFamily alloc] initWithSystemIcon:fourByteCode]);
 }
 
-+ (IconFamily*) iconFamilyWithThumbnailsOfImage:(NSImage*)image
++ (IconFamily*)iconFamilyWithThumbnailsOfImage:(NSImage*)image
 {
 	return AUTORELEASEOBJ([[IconFamily alloc] initWithThumbnailsOfImage:image]);
 }
 
-+ (IconFamily*) iconFamilyWithThumbnailsOfImage:(NSImage*)image usingImageInterpolation:(NSImageInterpolation)imageInterpolation
++ (IconFamily*)iconFamilyWithThumbnailsOfImage:(NSImage*)image usingImageInterpolation:(NSImageInterpolation)imageInterpolation
 {
 	return AUTORELEASEOBJ([[IconFamily alloc] initWithThumbnailsOfImage:image usingImageInterpolation:imageInterpolation]);
 }
@@ -98,8 +91,7 @@ enum {
 // The proper way to do this is to simply allocate a zero-sized handle (not to be confused with an empty handle) and assign it to hIconFamily.  This technique works on Mac OS X 10.2 as well as on 10.0.x and 10.1.x.  Our previous technique of allocating an IconFamily struct with a resourceSize of 0 no longer works as of Mac OS X 10.2.
 - (instancetype)init
 {
-	self = [super init];
-	if (self) {
+	if (self = [super init]) {
 		hIconFamily = (IconFamilyHandle)NewHandle(0);
 		if (hIconFamily == NULL) {
 			AUTORELEASEOBJNORETURN(self);
@@ -111,20 +103,20 @@ enum {
 
 - (instancetype)initWithContentsOfFile:(NSString*)path
 {
-	FSRef ref;
-	OSStatus result;
-	
-	self = [self init];
-	if (self) {
+	if (self = [self init]) {
+		FSRef		ref;
+		OSStatus	result;
+
+		
 		if (hIconFamily) {
-			DisposeHandle( (Handle)hIconFamily );
+			DisposeHandle((Handle)hIconFamily);
 			hIconFamily = NULL;
 		}
 		if (![path getFSRef:&ref createFileIfNecessary:NO]) {
 			AUTORELEASEOBJNORETURN(self);
 			return nil;
 		}
-		result = ReadIconFromFSRef( &ref, &hIconFamily );
+		result = ReadIconFromFSRef(&ref, &hIconFamily);
 		if (result != noErr) {
 			AUTORELEASEOBJNORETURN(self);
 			return nil;
@@ -135,10 +127,9 @@ enum {
 
 - (instancetype)initWithIconFamilyHandle:(IconFamilyHandle)hNewIconFamily
 {
-	self = [self init];
-	if (self) {
+	if (self = [self init]) {
 		if (hIconFamily) {
-			DisposeHandle( (Handle)hIconFamily );
+			DisposeHandle((Handle)hIconFamily);
 			hIconFamily = NULL;
 		}
 		hIconFamily = hNewIconFamily;
@@ -146,53 +137,45 @@ enum {
 	return self;
 }
 
-- (instancetype)initWithIconOfFile:(NSString*)path
+- (instancetype)initWithIconOfFileURL:(NSURL*)path
 {
-	IconRef		iconRef;
-	OSStatus	result;
-	SInt16		label;
-	FSRef		ref;
-	
-	self = [self init];
-	if (self)
-	{
-		if (hIconFamily)
-		{
-			DisposeHandle((Handle)hIconFamily );
+	if (self = [self init]) {
+		IconRef		iconRef;
+		OSStatus	result;
+		SInt16		label;
+		FSRef		ref;
+		
+		if (hIconFamily) {
+			DisposeHandle((Handle)hIconFamily);
 			hIconFamily = NULL;
 		}
 		
-		if( ![path getFSRef:&ref createFileIfNecessary:NO] )
-		{
+		if(![path getFSRef:&ref createFileIfNecessary:NO]) {
 			AUTORELEASEOBJNORETURN(self);
 			return nil;
 		}
 		
-		result = GetIconRefFromFileInfo(
-										&ref,
+		result = GetIconRefFromFileInfo(&ref,
 										/*inFileNameLength*/ 0,
 										/*inFileName*/ NULL,
 										kFSCatInfoNone,
 										/*inCatalogInfo*/ NULL,
 										kIconServicesNormalUsageFlag,
 										&iconRef,
-										&label );
+										&label);
 		
-		if (result != noErr)
-		{
+		if (result != noErr) {
 			AUTORELEASEOBJNORETURN(self);
 			return nil;
 		}
 		
-		result = IconRefToIconFamily(
-									 iconRef,
+		result = IconRefToIconFamily(iconRef,
 									 kSelectorAllAvailableData,
-									 &hIconFamily );
+									 &hIconFamily);
 		
-		ReleaseIconRef( iconRef );
+		ReleaseIconRef(iconRef);
 		
-		if (result != noErr || !hIconFamily)
-		{
+		if (result != noErr || !hIconFamily) {
 			AUTORELEASEOBJNORETURN(self);
 			return nil;
 		}
@@ -200,35 +183,34 @@ enum {
 	return self;
 }
 
+- (instancetype)initWithIconOfFile:(NSString*)path
+{
+	return self = [self initWithIconOfFileURL:[NSURL fileURLWithPath:path]];
+}
+
 - (instancetype)initWithSystemIcon:(OSType)fourByteCode
 {
-	IconRef	iconRef;
-	OSErr	result;
-	
-	self = [self init];
-	if (self)
-	{
-		if (hIconFamily)
-		{
-			DisposeHandle( (Handle)hIconFamily );
+	if (self = [self init]) {
+		IconRef	iconRef;
+		OSErr	result;
+		
+		if (hIconFamily) {
+			DisposeHandle((Handle)hIconFamily);
 			hIconFamily = NULL;
 		}
 		
 		result = GetIconRef(kOnSystemDisk, kSystemIconsCreator, fourByteCode, &iconRef);
 		
-		if (result != noErr)
-		{
+		if (result != noErr) {
 			AUTORELEASEOBJNORETURN(self);
 			return nil;
 		}
 		
-		result = IconRefToIconFamily(
-									 iconRef,
+		result = IconRefToIconFamily(iconRef,
 									 kSelectorAllAvailableData,
 									 &hIconFamily );
 		
-		if (result != noErr || !hIconFamily)
-		{
+		if (result != noErr || !hIconFamily) {
 			AUTORELEASEOBJNORETURN(self);
 			return nil;
 		}
@@ -385,8 +367,8 @@ enum {
 	NSBitmapFormat bitmapFormat = NSAlphaFirstBitmapFormat;
 #endif
 	OSErr result;
-	unsigned long* pRawBitmapData;
-	unsigned long* pRawBitmapDataEnd;
+	uint32_t* pRawBitmapData;
+	uint32_t* pRawBitmapDataEnd;
 	unsigned char* pRawMaskData;
 	unsigned char* pBitmapImageRepBitmapData;
 	
@@ -438,19 +420,19 @@ enum {
 	}
 	
 	// Get the raw, uncompressed bitmap data for the requested element.
-	hRawBitmapData = NewHandle( pixelsWide * pixelsWide * 4 );
-	result = GetIconFamilyData( hIconFamily, elementType, hRawBitmapData );
+	hRawBitmapData = NewHandle(pixelsWide * pixelsWide * 4);
+	result = GetIconFamilyData(hIconFamily, elementType, hRawBitmapData);
 	if (result != noErr) {
-		DisposeHandle( hRawBitmapData );
+		DisposeHandle(hRawBitmapData);
 		return nil;
 	}
 	
 	if (maskElementType) {
 		// Get the corresponding raw, uncompressed 8-bit mask data.
-		hRawMaskData = NewHandle( pixelsWide * pixelsWide );
-		result = GetIconFamilyData( hIconFamily, maskElementType, hRawMaskData );
+		hRawMaskData = NewHandle(pixelsWide * pixelsWide );
+		result = GetIconFamilyData(hIconFamily, maskElementType, hRawMaskData);
 		if (result != noErr) {
-			DisposeHandle( hRawMaskData );
+			DisposeHandle(hRawMaskData);
 			hRawMaskData = NULL;
 		}
 	}
@@ -461,41 +443,27 @@ enum {
 #else
 	// With proper attention to byte order, we can fold the mask data into the color data in-place, producing RGBA data suitable for handing off to NSBitmapImageRep.
 #endif
-	//    HLock( hRawBitmapData ); // Handle-based memory isn't compacted anymore, so calling HLock()/HUnlock() is unnecessary.
-	pRawBitmapData = (unsigned long*) *hRawBitmapData;
+	HLock(hRawBitmapData);
+	pRawBitmapData = (uint32_t*) *hRawBitmapData;
 	pRawBitmapDataEnd = pRawBitmapData + pixelsWide * pixelsWide;
 	if (hRawMaskData) {
-		//        HLock( hRawMaskData ); // Handle-based memory isn't compacted anymore, so calling HLock()/HUnlock() is unnecessary.
+		HLock(hRawMaskData);
 		pRawMaskData = (unsigned char*) *hRawMaskData;
 		while (pRawBitmapData < pRawBitmapDataEnd) {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 			// Convert the xRGB pixel data to ARGB.
 			//                                                          PowerPC         Intel
 			//                                                          -------         -----
 			// Bytes in memory are                                      x R G B         x R G B
 			// *pRawBitmapData loads as 32-bit word into register       xRGB            BGRx
-			// NSSwapHostLongToBig() swaps this to                      xRGB            xRGB
+			// CFSwapInt32BigToHost() swaps this to                      xRGB            xRGB
 			// Loading *pRawMaskData and shifting left 24 bits yields   A000            A000
 			// Bitwise ORing these two words together yields            ARGB            ARGB
-			// NSSwapBigLongToHost() swaps this to                      ARGB            BGRA
+			// CFSwapInt32BigToHost() swaps this to                      ARGB            BGRA
 			// Bytes in memory after they're stored as a 32-bit word    A R G B         A R G B
-			*pRawBitmapData = NSSwapBigLongToHost((*pRawMaskData++ << 24) | NSSwapHostLongToBig(*pRawBitmapData));
-#else
-			// Convert the xRGB pixel data to RGBA.
-			//                                                          PowerPC         Intel
-			//                                                          -------         -----
-			// Bytes in memory are                                      x R G B         x R G B
-			// *pRawBitmapData loads as 32-bit word into register       xRGB            BGRx
-			// NSSwapHostLongToBig() swaps this to                      xRGB            xRGB
-			// Shifting left 8 bits yields ('0' denotes all zero bits)  RGB0            RGB0
-			// Bitwise ORing with *pRawMaskData byte yields             RGBA            RGBA
-			// NSSwapBigLongToHost() swaps this to                      RGBA            ABGR
-			// Bytes in memory after they're stored as a 32-bit word    R G B A         R G B A
-			*pRawBitmapData = NSSwapBigLongToHost((NSSwapHostLongToBig(*pRawBitmapData) << 8) | *pRawMaskData++);
-#endif
+			*pRawBitmapData = CFSwapInt32BigToHost((*pRawMaskData++ << 24) | CFSwapInt32BigToHost(*pRawBitmapData));
 			++pRawBitmapData;
 		}
-		//        HUnlock( hRawMaskData ); // Handle-based memory isn't compacted anymore, so calling HLock()/HUnlock() is unnecessary.
+		HUnlock(hRawMaskData);
 	} else {
 		if(maskElementType) {
 			// We SHOULD have a mask, but apparently not. Fake it with alpha=1.
@@ -550,12 +518,12 @@ enum {
 		memcpy( pBitmapImageRepBitmapData, *hRawBitmapData,
 			   pixelsWide * pixelsWide * 4 );
 	}
-	//    HUnlock( hRawBitmapData ); // Handle-based memory isn't compacted anymore, so calling HLock()/HUnlock() is unnecessary.
+	HUnlock(hRawBitmapData);
 	
 	// Free the retrieved raw data.
-	DisposeHandle( hRawBitmapData );
+	DisposeHandle(hRawBitmapData);
 	if (hRawMaskData)
-		DisposeHandle( hRawMaskData );
+		DisposeHandle(hRawMaskData);
 	
 	// Return nil if the NSBitmapImageRep didn't give us a buffer to copy into.
 	if (pBitmapImageRepBitmapData == NULL)
@@ -565,7 +533,7 @@ enum {
 	return AUTORELEASEOBJ(bitmapImageRep);
 }
 
-- (NSImage*) imageWithAllReps
+- (NSImage*)imageWithAllReps
 {
 	NSImage* image = NULL;
 	HLock((Handle)hIconFamily);
@@ -574,7 +542,7 @@ enum {
 	return image;
 }
 
-- (BOOL) setIconFamilyElement:(OSType)elementType fromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep
+- (BOOL)setIconFamilyElement:(OSType)elementType fromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep
 {
 	Handle hRawData = NULL;
 	OSErr result;
@@ -664,12 +632,12 @@ enum {
 	return YES;
 }
 
-- (BOOL) setAsCustomIconForFile:(NSString*)path
+- (BOOL)setAsCustomIconForFile:(NSString*)path
 {
 	return([self setAsCustomIconForFile:path withCompatibility:NO]);
 }
 
-- (BOOL) setAsCustomIconForFile:(NSString*)path withCompatibility:(BOOL)compat
+- (BOOL)setAsCustomIconForFile:(NSString*)path withCompatibility:(BOOL)compat
 {
 	FSRef targetFileFSRef;
 	FSRef parentDirectoryFSRef;
@@ -710,8 +678,7 @@ enum {
 	// the file already has a resource fork, we receive a result code of
 	// dupFNErr, which is not really an error per se, but just a notification
 	// to us that creating a new resource fork for the file was not necessary.)
-	FSCreateResFile(
-					&parentDirectoryFSRef,
+	FSCreateResFile(&parentDirectoryFSRef,
 					filename.length,
 					filename.unicode,
 					kFSCatInfoNone,
@@ -728,7 +695,7 @@ enum {
 	}
 	
 	// Open the file's resource fork.
-	file = FSOpenResFile( &targetFileFSRef, fsRdWrPerm );
+	file = FSOpenResFile(&targetFileFSRef, fsRdWrPerm);
 	if (file == -1)
 		return NO;
 	
@@ -737,29 +704,28 @@ enum {
 	// CloseResFile() call its master pointer will be set to 0xffffffff.
 	// We want to keep the icon family data, so we make a copy.)
 	// HandToHand() returns the handle of the copy in hIconFamily.
-	hIconFamilyCopy = (Handle) hIconFamily;
-	result = HandToHand( &hIconFamilyCopy );
+	hIconFamilyCopy = (Handle)hIconFamily;
+	result = HandToHand(&hIconFamilyCopy);
 	if (result != noErr) {
-		CloseResFile( file );
+		CloseResFile(file);
 		return NO;
 	}
 	
 	// Remove the file's existing kCustomIconResource of type kIconFamilyType
 	// (if any).
-	hExistingCustomIcon = GetResource( kIconFamilyType, kCustomIconResource );
-	if( hExistingCustomIcon )
-		RemoveResource( hExistingCustomIcon );
+	hExistingCustomIcon = GetResource(kIconFamilyType, kCustomIconResource);
+	if (hExistingCustomIcon)
+		RemoveResource(hExistingCustomIcon);
 	
 	// Now add our icon family as the file's new custom icon.
-	AddResource( (Handle)hIconFamilyCopy, kIconFamilyType,
+	AddResource((Handle)hIconFamilyCopy, kIconFamilyType,
 				kCustomIconResource, "\p");
 	if (ResError() != noErr) {
-		CloseResFile( file );
+		CloseResFile(file);
 		return NO;
 	}
 	
-	if( compat )
-	{
+	if (compat) {
 		[self addResourceType:kLarge8BitData asResID:kCustomIconResource];
 		[self addResourceType:kLarge1BitMask asResID:kCustomIconResource];
 		[self addResourceType:kSmall8BitData asResID:kCustomIconResource];
@@ -768,7 +734,7 @@ enum {
 	
 	// Close the file's resource fork, flushing the resource map and new icon
 	// data out to disk.
-	CloseResFile( file );
+	CloseResFile(file);
 	if (ResError() != noErr)
 		return NO;
 	
@@ -776,8 +742,7 @@ enum {
 	
 	// Now we need to set the file's Finder info so the Finder will know that
 	// it has a custom icon.  Start by getting the file's current finder info:
-	result = FSGetCatalogInfo(
-							  &targetFileFSRef,
+	result = FSGetCatalogInfo(&targetFileFSRef,
 							  kFSCatInfoFinderInfo,
 							  &catInfo,
 							  /*outName*/ NULL,
@@ -792,10 +757,10 @@ enum {
 	//     "set bit 10 (has custom icon) and unset the inited flag
 	//      kHasBeenInited is 0x0100 so the mask will be 0xFEFF:"
 	//    finderInfo.fdFlags = 0xFEFF & (finderInfo.fdFlags | kHasCustomIcon ) ;
-	finderInfo->finderFlags = (finderInfo->finderFlags | kHasCustomIcon ) & ~kHasBeenInited;
+	finderInfo->finderFlags = ((finderInfo->finderFlags | kHasCustomIcon ) & ~kHasBeenInited);
 	
 	// Now write the Finder info back.
-	result = FSSetCatalogInfo( &targetFileFSRef, kFSCatInfoFinderInfo, &catInfo );
+	result = FSSetCatalogInfo(&targetFileFSRef, kFSCatInfoFinderInfo, &catInfo);
 	if (result != noErr)
 		return NO;
 	
@@ -805,14 +770,14 @@ enum {
 	
 	// Notify the system that the directory containing the file has changed, to
 	// give Finder the chance to find out about the file's new custom icon.
-	result = FNNotify( &parentDirectoryFSRef, kFNDirectoryModifiedMessage, kNilOptions );
+	result = FNNotify(&parentDirectoryFSRef, kFNDirectoryModifiedMessage, kNilOptions);
 	if (result != noErr)
 		return NO;
 	
 	return YES;
 }
 
-+ (BOOL) removeCustomIconFromFile:(NSString*)path
++ (BOOL)removeCustomIconFromFile:(NSString*)path
 {
 	FSRef targetFileFSRef;
 	FSRef parentDirectoryFSRef;
@@ -827,18 +792,18 @@ enum {
 		return NO;
 	
 	// Open the file's resource fork, if it has one.
-	file = FSOpenResFile( &targetFileFSRef, fsRdWrPerm );
+	file = FSOpenResFile(&targetFileFSRef, fsRdWrPerm);
 	if (file == -1)
 		return NO;
 	
 	// Remove the file's existing kCustomIconResource of type kIconFamilyType
 	// (if any).
-	hExistingCustomIcon = GetResource( kIconFamilyType, kCustomIconResource );
-	if( hExistingCustomIcon )
-		RemoveResource( hExistingCustomIcon );
+	hExistingCustomIcon = GetResource(kIconFamilyType, kCustomIconResource);
+	if(hExistingCustomIcon)
+		RemoveResource(hExistingCustomIcon);
 	
 	// Close the file's resource fork, flushing the resource map out to disk.
-	CloseResFile( file );
+	CloseResFile(file);
 	if (ResError() != noErr)
 		return NO;
 	
@@ -846,8 +811,7 @@ enum {
 	// it has no custom icon. Start by getting the file's current Finder info.
 	// Also get an FSRef for its parent directory, that we can use in the
 	// FNNotify() call below.
-	result = FSGetCatalogInfo(
-							  &targetFileFSRef,
+	result = FSGetCatalogInfo(&targetFileFSRef,
 							  kFSCatInfoFinderInfo,
 							  &catInfo,
 							  /*outName*/ NULL,
@@ -857,27 +821,27 @@ enum {
 		return NO;
 	
 	// Clear the kHasCustomIcon flag and the kHasBeenInited flag.
-	finderInfo->finderFlags = finderInfo->finderFlags & ~(kHasCustomIcon | kHasBeenInited);
+	finderInfo->finderFlags &= ~(kHasCustomIcon | kHasBeenInited);
 	
 	// Now write the Finder info back.
-	result = FSSetCatalogInfo( &targetFileFSRef, kFSCatInfoFinderInfo, &catInfo );
+	result = FSSetCatalogInfo(&targetFileFSRef, kFSCatInfoFinderInfo, &catInfo);
 	if (result != noErr)
 		return NO;
 	
 	// Notify the system that the directory containing the file has changed, to give Finder the chance to find out about the file's new custom icon.
-	result = FNNotify( &parentDirectoryFSRef, kFNDirectoryModifiedMessage, kNilOptions );
+	result = FNNotify(&parentDirectoryFSRef, kFNDirectoryModifiedMessage, kNilOptions);
 	if (result != noErr)
 		return NO;
 	
 	return YES;
 }
 
-- (BOOL) setAsCustomIconForDirectory:(NSString*)path
+- (BOOL)setAsCustomIconForDirectory:(NSString*)path
 {
 	return [self setAsCustomIconForDirectory:path withCompatibility:NO];
 }
 
-- (BOOL) setAsCustomIconForDirectory:(NSString*)path withCompatibility:(BOOL)compat
+- (BOOL)setAsCustomIconForDirectory:(NSString*)path withCompatibility:(BOOL)compat
 {
 	NSFileManager			*fm = [NSFileManager defaultManager];
 	BOOL					isDir;
@@ -952,8 +916,7 @@ enum {
 	// Make sure the file has a resource fork that we can open.  (Although
 	// this sounds like it would clobber an existing resource fork, the Carbon
 	// Resource Manager docs for this function say that's not the case.)
-	FSCreateResFile(
-					&targetFolderFSRef,
+	FSCreateResFile(&targetFolderFSRef,
 					filename.length,
 					filename.unicode,
 					kFSCatInfoFinderInfo,
@@ -965,7 +928,7 @@ enum {
 		return NO;
 	
 	// Open the file's resource fork.
-	file = FSOpenResFile( &iconrFSRef, fsRdWrPerm );
+	file = FSOpenResFile(&iconrFSRef, fsRdWrPerm);
 	if (file == -1)
 		return NO;
 	
@@ -974,30 +937,29 @@ enum {
 	// CloseResFile() call its master pointer will be set to 0xffffffff.
 	// We want to keep the icon family data, so we make a copy.)
 	// HandToHand() returns the handle of the copy in hIconFamily.
-	hIconFamilyCopy = (Handle) hIconFamily;
-	result = HandToHand( &hIconFamilyCopy );
+	hIconFamilyCopy = (Handle)hIconFamily;
+	result = HandToHand(&hIconFamilyCopy);
 	if (result != noErr) {
-		CloseResFile( file );
+		CloseResFile(file);
 		return NO;
 	}
 	
 	// Remove the file's existing kCustomIconResource of type kIconFamilyType
 	// (if any).
-	hExistingCustomIcon = GetResource( kIconFamilyType, kCustomIconResource );
-	if( hExistingCustomIcon )
-		RemoveResource( hExistingCustomIcon );
+	hExistingCustomIcon = GetResource(kIconFamilyType, kCustomIconResource);
+	if(hExistingCustomIcon)
+		RemoveResource(hExistingCustomIcon);
 	
 	// Now add our icon family as the file's new custom icon.
-	AddResource( (Handle)hIconFamilyCopy, kIconFamilyType,
+	AddResource((Handle)hIconFamilyCopy, kIconFamilyType,
 				kCustomIconResource, "\p");
 	
 	if (ResError() != noErr) {
-		CloseResFile( file );
+		CloseResFile(file);
 		return NO;
 	}
 	
-	if( compat )
-	{
+	if (compat) {
 		[self addResourceType:kLarge8BitData asResID:kCustomIconResource];
 		[self addResourceType:kLarge1BitMask asResID:kCustomIconResource];
 		[self addResourceType:kSmall8BitData asResID:kCustomIconResource];
@@ -1006,7 +968,7 @@ enum {
 	
 	// Close the file's resource fork, flushing the resource map and new icon
 	// data out to disk.
-	CloseResFile( file );
+	CloseResFile(file);
 	if (ResError() != noErr)
 		return NO;
 	
@@ -1016,16 +978,16 @@ enum {
 							  /*outName*/ NULL,
 							  /*fsSpec*/ NULL,
 							  /*parentRef*/ NULL);
-	if( result != noErr )
+	if (result != noErr)
 		return NO;
 	
 	// Tell the Finder that the folder now has a custom icon.
 	((struct FolderInfo *)catInfo.finderInfo)->finderFlags = ( ((struct FolderInfo *)catInfo.finderInfo)->finderFlags | kHasCustomIcon ) & ~kHasBeenInited;
 	
-	result = FSSetCatalogInfo( &targetFolderFSRef,
+	result = FSSetCatalogInfo(&targetFolderFSRef,
 							  kFSCatInfoFinderInfo,
 							  &catInfo);
-	if( result != noErr )
+	if (result != noErr)
 		return NO;
 	
 	// Notify the system that the target directory has changed, to give Finder
@@ -1035,6 +997,24 @@ enum {
 		return NO;
 	
 	return YES;
+}
+
+- (BOOL)setAsCustomIconForPath:(NSString *)path
+{
+	return [self setAsCustomIconForPath:path withCompatibility:NO];
+}
+
+- (BOOL)setAsCustomIconForPath:(NSString *)path withCompatibility:(BOOL)compat
+{
+	NSFileManager *fm = [NSFileManager defaultManager];
+	BOOL isDirectory = NO;
+	if (![fm fileExistsAtPath:path isDirectory:&isDirectory])
+		return NO;
+	if (isDirectory) {
+		return [self setAsCustomIconForDirectory:path withCompatibility:compat];
+	} else {
+		return [self setAsCustomIconForFile:path withCompatibility:compat];
+	}
 }
 
 - (BOOL) writeToFile:(NSString*)path
@@ -1048,7 +1028,7 @@ enum {
 	return success;
 }
 
-+ (NSImage*) resampleImage:(NSImage*)image toIconWidth:(int)iconWidth usingImageInterpolation:(NSImageInterpolation)imageInterpolation
++ (NSImage*)resampleImage:(NSImage*)image toIconWidth:(int)iconWidth usingImageInterpolation:(NSImageInterpolation)imageInterpolation
 {
 	NSGraphicsContext* graphicsContext;
 	BOOL wasAntialiasing;
@@ -1153,19 +1133,16 @@ enum {
 	// So far, this code only handles non-planar 32-bit RGBA and 24-bit RGB source bitmaps.
 	// This could be made more flexible with some additional programming to accommodate other possible
 	// formats...
-	if (isPlanar)
-	{
+	if (isPlanar) {
 		NSLog(@"get32BitDataFromBitmapImageRep:requiredPixelSize: returning NULL due to isPlanar == YES");
 		return NULL;
 	}
-	if (bitsPerSample != 8)
-	{
+	if (bitsPerSample != 8) {
 		NSLog(@"get32BitDataFromBitmapImageRep:requiredPixelSize: returning NULL due to bitsPerSample == %d", bitsPerSample);
 		return NULL;
 	}
 	
-	if (((samplesPerPixel == 3) && (bitsPerPixel == 24)) || ((samplesPerPixel == 4) && (bitsPerPixel == 32)))
-	{
+	if (((samplesPerPixel == 3) && (bitsPerPixel == 24)) || ((samplesPerPixel == 4) && (bitsPerPixel == 32))) {
 		rawDataSize = pixelsWide * pixelsHigh * 4;
 		hRawData = NewHandle( rawDataSize );
 		if (hRawData == NULL)
@@ -1209,9 +1186,7 @@ enum {
 				}
 			}
 		}
-	}
-	else
-	{
+	} else {
 		NSLog(@"get32BitDataFromBitmapImageRep:requiredPixelSize: returning NULL due to samplesPerPixel == %d, bitsPerPixel == %d", samplesPerPixel, bitsPerPixel);
 		return NULL;
 	}
@@ -1219,7 +1194,7 @@ enum {
 	return hRawData;
 }
 
-+ (Handle) get8BitDataFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize
++ (Handle)get8BitDataFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize
 {
 	Handle			hRawData;
 	unsigned char*	pRawData;
@@ -1244,19 +1219,16 @@ enum {
 	
 	// So far, this code only handles non-planar 32-bit RGBA and 24-bit RGB source bitmaps.
 	// This could be made more flexible with some additional programming...
-	if (isPlanar)
-	{
+	if (isPlanar) {
 		NSLog(@"get8BitDataFromBitmapImageRep:requiredPixelSize: returning NULL due to isPlanar == YES");
 		return NULL;
 	}
-	if (bitsPerSample != 8)
-	{
+	if (bitsPerSample != 8) {
 		NSLog(@"get8BitDataFromBitmapImageRep:requiredPixelSize: returning NULL due to bitsPerSample == %d", bitsPerSample);
 		return NULL;
 	}
 	
-	if (((samplesPerPixel == 3) && (bitsPerPixel == 24)) || ((samplesPerPixel == 4) && (bitsPerPixel == 32)))
-	{
+	if (((samplesPerPixel == 3) && (bitsPerPixel == 24)) || ((samplesPerPixel == 4) && (bitsPerPixel == 32))) {
 		CGDirectPaletteRef cgPal;
 		CGDeviceColor cgCol;
 		
@@ -1299,9 +1271,7 @@ enum {
 		}
 		
 		CGPaletteRelease(cgPal);
-	}
-	else
-	{
+	} else {
 		NSLog(@"get8BitDataFromBitmapImageRep:requiredPixelSize: returning NULL due to samplesPerPixel == %d, bitsPerPixel == %d", samplesPerPixel, bitsPerPixel);
 		return NULL;
 	}
@@ -1309,7 +1279,7 @@ enum {
 	return hRawData;
 }
 
-+ (Handle) get8BitMaskFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize
++ (Handle)get8BitMaskFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize
 {
 	Handle			hRawData;
 	unsigned char*	pRawData;
@@ -1319,14 +1289,14 @@ enum {
 	int				x, y;
 	
 	// Get information about the bitmapImageRep.
-	int pixelsWide      = [bitmapImageRep pixelsWide];
-	int pixelsHigh      = [bitmapImageRep pixelsHigh];
-	int bitsPerSample   = [bitmapImageRep bitsPerSample];
-	int samplesPerPixel = [bitmapImageRep samplesPerPixel];
-	int bitsPerPixel    = [bitmapImageRep bitsPerPixel];
-	BOOL isPlanar       = [bitmapImageRep isPlanar];
-	int bytesPerRow     = [bitmapImageRep bytesPerRow];
-	unsigned char* bitmapData = [bitmapImageRep bitmapData];
+	int pixelsWide				= [bitmapImageRep pixelsWide];
+	int pixelsHigh				= [bitmapImageRep pixelsHigh];
+	int bitsPerSample			= [bitmapImageRep bitsPerSample];
+	int samplesPerPixel			= [bitmapImageRep samplesPerPixel];
+	int bitsPerPixel			= [bitmapImageRep bitsPerPixel];
+	BOOL isPlanar				= [bitmapImageRep isPlanar];
+	int bytesPerRow				= [bitmapImageRep bytesPerRow];
+	unsigned char* bitmapData	= [bitmapImageRep bitmapData];
 	
 	// Make sure bitmap has the required dimensions.
 	if (pixelsWide != requiredPixelSize || pixelsHigh != requiredPixelSize)
@@ -1334,21 +1304,18 @@ enum {
 	
 	// So far, this code only handles non-planar 32-bit RGBA, 24-bit RGB and 8-bit grayscale source bitmaps.
 	// This could be made more flexible with some additional programming...
-	if (isPlanar)
-	{
+	if (isPlanar) {
 		NSLog(@"get8BitMaskFromBitmapImageRep:requiredPixelSize: returning NULL due to isPlanar == YES");
 		return NULL;
 	}
-	if (bitsPerSample != 8)
-	{
+	if (bitsPerSample != 8) {
 		NSLog(@"get8BitMaskFromBitmapImageRep:requiredPixelSize: returning NULL due to bitsPerSample == %d", bitsPerSample);
 		return NULL;
 	}
 	
-	if (((samplesPerPixel == 1) && (bitsPerPixel == 8)) || ((samplesPerPixel == 3) && (bitsPerPixel == 24)) || ((samplesPerPixel == 4) && (bitsPerPixel == 32)))
-	{
+	if (((samplesPerPixel == 1) && (bitsPerPixel == 8)) || ((samplesPerPixel == 3) && (bitsPerPixel == 24)) || ((samplesPerPixel == 4) && (bitsPerPixel == 32))) {
 		rawDataSize = pixelsWide * pixelsHigh;
-		hRawData = NewHandle( rawDataSize );
+		hRawData = NewHandle(rawDataSize);
 		if (hRawData == NULL)
 			return NULL;
 		pRawData = (unsigned char*) *hRawData;
@@ -1364,20 +1331,16 @@ enum {
 					*pDest++ = *pSrc++;
 				}
 			}
-		}
-		else if (bitsPerPixel == 24) {
-			memset( pDest, 255, rawDataSize );
-		}
-		else if (bitsPerPixel == 8) {
+		} else if (bitsPerPixel == 24) {
+			memset(pDest, 255, rawDataSize);
+		} else if (bitsPerPixel == 8) {
 			for (y = 0; y < pixelsHigh; y++) {
-				memcpy( pDest, pSrc, pixelsWide );
+				memcpy(pDest, pSrc, pixelsWide);
 				pSrc += bytesPerRow;
 				pDest += pixelsWide;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		NSLog(@"get8BitMaskFromBitmapImageRep:requiredPixelSize: returning NULL due to samplesPerPixel == %d, bitsPerPixel == %d", samplesPerPixel, bitsPerPixel);
 		return NULL;
 	}
@@ -1386,7 +1349,7 @@ enum {
 }
 
 // NOTE: This method hasn't been fully tested yet.
-+ (Handle) get1BitMaskFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize
++ (Handle)get1BitMaskFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize
 {
 	Handle			hRawData;
 	unsigned char*	pRawData;
@@ -1397,14 +1360,14 @@ enum {
 	unsigned char	maskByte;
 	
 	// Get information about the bitmapImageRep.
-	int pixelsWide      = [bitmapImageRep pixelsWide];
-	int pixelsHigh      = [bitmapImageRep pixelsHigh];
-	int bitsPerSample   = [bitmapImageRep bitsPerSample];
-	int samplesPerPixel = [bitmapImageRep samplesPerPixel];
-	int bitsPerPixel    = [bitmapImageRep bitsPerPixel];
-	BOOL isPlanar       = [bitmapImageRep isPlanar];
-	int bytesPerRow     = [bitmapImageRep bytesPerRow];
-	unsigned char* bitmapData = [bitmapImageRep bitmapData];
+	int pixelsWide				= [bitmapImageRep pixelsWide];
+	int pixelsHigh				= [bitmapImageRep pixelsHigh];
+	int bitsPerSample			= [bitmapImageRep bitsPerSample];
+	int samplesPerPixel			= [bitmapImageRep samplesPerPixel];
+	int bitsPerPixel			= [bitmapImageRep bitsPerPixel];
+	BOOL isPlanar				= [bitmapImageRep isPlanar];
+	int bytesPerRow				= [bitmapImageRep bytesPerRow];
+	unsigned char* bitmapData	= [bitmapImageRep bitmapData];
 	
 	// Make sure bitmap has the required dimensions.
 	if (pixelsWide != requiredPixelSize || pixelsHigh != requiredPixelSize)
@@ -1412,17 +1375,15 @@ enum {
 	
 	// So far, this code only handles non-planar 32-bit RGBA, 24-bit RGB, 8-bit grayscale, and 1-bit source bitmaps.
 	// This could be made more flexible with some additional programming...
-	if (isPlanar)
-	{
+	if (isPlanar) {
 		NSLog(@"get1BitMaskFromBitmapImageRep:requiredPixelSize: returning NULL due to isPlanar == YES");
 		return NULL;
 	}
 	
 	if (((bitsPerPixel == 1) && (samplesPerPixel == 1) && (bitsPerSample == 1)) || ((bitsPerPixel == 8) && (samplesPerPixel == 1) && (bitsPerSample == 8)) ||
-		((bitsPerPixel == 24) && (samplesPerPixel == 3) && (bitsPerSample == 8)) || ((bitsPerPixel == 32) && (samplesPerPixel == 4) && (bitsPerSample == 8)))
-	{
+		((bitsPerPixel == 24) && (samplesPerPixel == 3) && (bitsPerSample == 8)) || ((bitsPerPixel == 32) && (samplesPerPixel == 4) && (bitsPerSample == 8))) {
 		rawDataSize = (pixelsWide * pixelsHigh)/4;
-		hRawData = NewHandle( rawDataSize );
+		hRawData = NewHandle(rawDataSize);
 		if (hRawData == NULL)
 			return NULL;
 		pRawData = (unsigned char*) *hRawData;
@@ -1446,11 +1407,9 @@ enum {
 					*pDest++ = maskByte;
 				}
 			}
-		}
-		else if (bitsPerPixel == 24) {
-			memset( pDest, 255, rawDataSize );
-		}
-		else if (bitsPerPixel == 8) {
+		} else if (bitsPerPixel == 24) {
+			memset(pDest, 255, rawDataSize);
+		} else if (bitsPerPixel == 8) {
 			for (y = 0; y < pixelsHigh; y++) {
 				pSrc = bitmapData + y * bytesPerRow;
 				for (x = 0; x < pixelsWide; x += 8) {
@@ -1469,16 +1428,14 @@ enum {
 		}
 		else if (bitsPerPixel == 1) {
 			for (y = 0; y < pixelsHigh; y++) {
-				memcpy( pDest, pSrc, pixelsWide / 8 );
+				memcpy(pDest, pSrc, pixelsWide / 8);
 				pDest += pixelsWide / 8;
 				pSrc += bytesPerRow;
 			}
 		}
 		
-		memcpy( pRawData+(pixelsWide*pixelsHigh)/8, pRawData, (pixelsWide*pixelsHigh)/8 );
-	}
-	else
-	{
+		memcpy(pRawData+(pixelsWide*pixelsHigh)/8, pRawData, (pixelsWide*pixelsHigh)/8);
+	} else {
 		NSLog(@"get1BitMaskFromBitmapImageRep:requiredPixelSize: returning NULL due to bitsPerPixel == %d, samplesPerPixel== %d, bitsPerSample == %d", bitsPerPixel, samplesPerPixel, bitsPerSample);
 		return NULL;
 	}
@@ -1488,15 +1445,15 @@ enum {
 
 - (BOOL)addResourceType:(OSType)type asResID:(ResID)resID
 {
-	Handle hIconRes = NewHandle( 0 );
+	Handle hIconRes = NewHandle(0);
 	OSErr err;
 	
-	err = GetIconFamilyData( hIconFamily, type, hIconRes );
+	err = GetIconFamilyData(hIconFamily, type, hIconRes);
 	
-	if( !GetHandleSize(hIconRes) || err != noErr )
+	if(!GetHandleSize(hIconRes) || err != noErr)
 		return NO;
 	
-	AddResource( hIconRes, type, resID, "\p" );
+	AddResource(hIconRes, type, resID, "\p");
 	
 	return YES;
 }
@@ -1511,26 +1468,25 @@ enum {
 
 + (BOOL) canInitWithScrap
 {
-	ScrapRef scrap = NULL;
-	ScrapFlavorInfo* scrapInfos = NULL;
-	UInt32 numInfos = 0;
-	int i = 0;
-	BOOL canInit = NO;
+	ScrapRef scrap					= NULL;
+	ScrapFlavorInfo* scrapInfos		= NULL;
+	UInt32 numInfos					= 0;
+	UInt32 i						= 0;
+	BOOL canInit					= NO;
 	
 	GetCurrentScrap(&scrap);
 	
-	GetScrapFlavorCount(scrap,&numInfos);
-	scrapInfos = malloc( sizeof(ScrapFlavorInfo)*numInfos );
+	GetScrapFlavorCount(scrap, &numInfos);
+	scrapInfos = malloc(sizeof(ScrapFlavorInfo) * numInfos);
 	if (scrapInfos) {
 		GetScrapFlavorInfoList(scrap, &numInfos, scrapInfos);
 		
-		for( i=0; i<numInfos; i++ )
-		{
-			if( scrapInfos[i].flavorType == 'icns' )
+		for(i = 0; i < numInfos; i++) {
+			if(scrapInfos[i].flavorType == 'icns')
 				canInit = YES;
 		}
 		
-		free( scrapInfos );
+		free(scrapInfos);
 	}
 	
 	return canInit;
@@ -1543,14 +1499,11 @@ enum {
 
 - (instancetype)initWithScrap
 {
-	Handle storageMem = NULL;
-	Size amountMem = 0;
-	ScrapRef scrap;
-	
-	self = [super init];
-	
-	if( self )
-	{
+	if (self = [super init]) {
+		Handle storageMem = NULL;
+		Size amountMem = 0;
+		ScrapRef scrap;
+
 		GetCurrentScrap(&scrap);
 		
 		GetScrapFlavorSize( scrap, 'icns', &amountMem );
@@ -1564,7 +1517,7 @@ enum {
 	return self;
 }
 
-- (BOOL) putOnScrap
+- (BOOL)putOnScrap
 {
 	ScrapRef scrap = NULL;
 	
@@ -1572,7 +1525,7 @@ enum {
 	GetCurrentScrap(&scrap);
 	
 	HLock((Handle)hIconFamily);
-	PutScrapFlavor( scrap, 'icns', kScrapFlavorMaskNone, GetHandleSize((Handle)hIconFamily), *hIconFamily);
+	PutScrapFlavor(scrap, 'icns', kScrapFlavorMaskNone, GetHandleSize((Handle)hIconFamily), *hIconFamily);
 	HUnlock((Handle)hIconFamily);
 	return YES;
 }

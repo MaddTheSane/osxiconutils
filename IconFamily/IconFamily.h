@@ -71,6 +71,7 @@
 // file.
 
 - (instancetype)initWithIconOfFile:(NSString*)path;
+- (instancetype)initWithIconOfFileURL:(NSURL*)path;
 
 // Initializes an IconFamily by referencing a standard system icon.
 
@@ -167,6 +168,9 @@
 
 - (BOOL) setAsCustomIconForDirectory:(NSString*)path;
 - (BOOL) setAsCustomIconForDirectory:(NSString*)path withCompatibility:(BOOL)compat;
+
+- (BOOL)setAsCustomIconForPath:(NSString *)path;
+- (BOOL)setAsCustomIconForPath:(NSString *)path withCompatibility:(BOOL)compat;
 
 // Removes the custom icon (if any) from the specified file's resource fork,
 // and clears the necessary Finder bits for the file.  (Note that this is a
