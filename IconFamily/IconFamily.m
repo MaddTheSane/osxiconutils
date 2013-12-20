@@ -25,21 +25,6 @@
 #import "NSString+CarbonFSRefCreation.h"
 #import "ARCBridge.h"
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-// This is defined in 10.5 and beyond in IconStorage.h
-enum {
-  kIconServices512PixelDataARGB = 'ic09' /* non-premultiplied 512x512 ARGB bitmap*/
-};
-#endif
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
-// This is defined in 10.4 and beyond in IconStorage.h
-enum {
-  kIconServices256PixelDataARGB = 'ic08' /* non-premultiplied 256x256 ARGB bitmap*/
-};
-#endif
-
-
 @interface IconFamily ()
 + (NSImage*) resampleImage:(NSImage*)image toIconWidth:(int)width usingImageInterpolation:(NSImageInterpolation)imageInterpolation;
 + (Handle)get32BitDataFromBitmapImageRep:(NSBitmapImageRep*)bitmapImageRep requiredPixelSize:(int)requiredPixelSize;
