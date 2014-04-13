@@ -1,3 +1,5 @@
 */*.pbxuser
 */*.mode1*
-**/xcuserdata
+**/xcuserdata/
+**/*.xccheckout
+**/.DS_Store
